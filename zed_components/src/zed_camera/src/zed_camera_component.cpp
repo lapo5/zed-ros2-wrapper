@@ -1660,13 +1660,13 @@ rcl_interfaces::msg::SetParametersResult ZedCamera::callback_paramChange(std::ve
 void ZedCamera::setTFCoordFrameNames()
 {
   // ----> Coordinate frames
-  mCameraFrameId = mCameraName + "_camera_center";
-  mLeftCamFrameId = mCameraName + "_left_camera_frame";
-  mLeftCamOptFrameId = mCameraName + "_left_camera_optical_frame";
-  mRightCamFrameId = mCameraName + "_right_camera_frame";
-  mRightCamOptFrameId = mCameraName + "_right_camera_optical_frame";
+  mCameraFrameId = "zed_link";
+  mLeftCamFrameId = "zed_link";
+  mLeftCamOptFrameId = "zed_link";
+  mRightCamFrameId = "zed_link";
+  mRightCamOptFrameId = "zed_link";
 
-  mImuFrameId = mCameraName + "_imu_link";
+  mImuFrameId = "zed_link";
   mBaroFrameId = mCameraFrameId;         // mCameraName + "_baro_link";   // TODO fix when XACRO is available
   mMagFrameId = mImuFrameId;             // mCameraName + "_mag_link"; // TODO fix when XACRO is available
   mTempLeftFrameId = mLeftCamFrameId;    // mCameraName + "_temp_left_link"; // TODO fix when XACRO is available
