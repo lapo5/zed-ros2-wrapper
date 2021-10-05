@@ -517,6 +517,9 @@ private:
     bool mObjDetRunning = false;
     // <---- Status Flags
 
+    bool force_publish_image_stream = false;
+    bool force_publish_image_depth = false;
+
     // ----> Positional Tracking
     sl::Pose mLastZedPose; // Sensor to Map transform
     sl::Transform mInitialPoseSl;

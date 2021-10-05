@@ -289,11 +289,9 @@ void ZedCamera::getGeneralParams() {
     } else if (camera_model == "zed2") {
         mCamUserModel = sl::MODEL::ZED2;
     } 
-#if ZED_SDK_MAJOR_VERSION==3 && ZED_SDK_MINOR_VERSION>=5
     else if (camera_model == "zed2i") {
         mCamUserModel = sl::MODEL::ZED2i;
     }
-#endif
     else {
         RCLCPP_ERROR_STREAM(get_logger(), "Camera model not valid in parameter values: " << camera_model);
     }
@@ -312,6 +310,10 @@ void ZedCamera::getGeneralParams() {
     getParam( "general.camera_max_reconnect", mMaxReconnectTemp, mMaxReconnectTemp,  " * Camera reconnection temptatives: ");
     getParam( "general.grab_frame_rate", mCamGrabFrameRate, mCamGrabFrameRate,  " * Camera framerate: ");
     getParam( "general.gpu_id", mGpuId, mGpuId,  " * GPU ID: ");
+
+
+    getParam( "enable_publish_image_depth", force_publish_image_depth, force_publish_image_depth,  " * Force Publish Image Depth: ");
+    getParam( "enable_publish_image_stream", force_publish_image_stream, force_publish_image_stream,  " * Force Publish Image Depth: ");
 
     // TODO ADD SVO SAVE COMPRESSION PARAMETERS
 
@@ -1418,13 +1420,13 @@ rcl_interfaces::msg::SetParametersResult ZedCamera::callback_paramChange(std::ve
 void ZedCamera::setTFCoordFrameNames()
 {
     // ----> Coordinate frames
-    mCameraFrameId = "zed_link";
-    mLeftCamFrameId = "zed_link";
-    mLeftCamOptFrameId = "zed_link";
-    mRightCamFrameId = "zed_link";
-    mRightCamOptFrameId = "zed_link";
+    mCameraFrameId = mBaseFrameId;
+    mLeftCamFrameId = mBaseFrameId;
+    mLeftCamOptFrameId = mBaseFrameId;
+    mRightCamFrameId = mBaseFrameId;
+    mRightCamOptFrameId = mBaseFrameId;
+    mImuFrameId = mBaseFrameId;
 
-    mImuFrameId = "zed_link";
     mBaroFrameId = mCameraFrameId; // mCameraName + "_baro_link";   // TODO fix when XACRO is available
     mMagFrameId = mImuFrameId; // mCameraName + "_mag_link"; // TODO fix when XACRO is available
     mTempLeftFrameId = mLeftCamFrameId; // mCameraName + "_temp_left_link"; // TODO fix when XACRO is available
@@ -1462,6 +1464,7 @@ void ZedCamera::setTFCoordFrameNames()
     RCLCPP_INFO_STREAM(get_logger(), " * Disparity Optical\t-> " << mDisparityOptFrameId);
     RCLCPP_INFO_STREAM(get_logger(), " * Confidence\t\t-> " << mConfidenceFrameId);
     RCLCPP_INFO_STREAM(get_logger(), " * Confidence Optical\t-> " << mConfidenceOptFrameId);
+
     if (mCamRealModel!=sl::MODEL::ZED)
     {
         RCLCPP_INFO_STREAM(get_logger(), " * IMU\t\t\t-> " << mImuFrameId);
@@ -3575,7 +3578,7 @@ bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
             retrieved = true;
             grab_ts=mat_right_raw_gray.timestamp;
         }
-        if(depthSubnumber>0) {
+        if(depthSubnumber>0 or this->force_publish_image_depth) {
             mZed.retrieveMeasure(mat_depth, sl::MEASURE::DEPTH, sl::MEM::CPU, mMatResolDepth);
             retrieved = true;
             grab_ts=mat_depth.timestamp;
@@ -3664,7 +3667,7 @@ bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
     // <---- Publish the left_raw=rgb_raw image if someone has subscribed to
 
     // ----> Publish the left_raw_gray=rgb_raw_gray image if someone has subscribed to
-    if (leftGrayRawSubnumber > 0) {
+    if (leftGrayRawSubnumber > 0 or this->force_publish_image_stream) {
         publishImageWithInfo( mat_left_raw_gray, mPubRawLeftGray, mLeftCamInfoRawMsg, mLeftCamOptFrameId, timeStamp);
     }
     if (rgbGrayRawSubnumber > 0) {
