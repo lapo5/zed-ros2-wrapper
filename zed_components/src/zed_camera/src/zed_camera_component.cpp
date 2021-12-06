@@ -3543,7 +3543,6 @@ bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
 
 
     if (lock.try_lock_for(std::chrono::milliseconds(1000/mCamGrabFrameRate))) {
-        std::chrono::steady_clock::time_point e2_1 = std::chrono::steady_clock::now();
         if(rgbSubnumber+leftSubnumber+stereoSubnumber>0) {
             retrieved = sl::ERROR_CODE::SUCCESS == mZed.retrieveImage(mat_left, sl::VIEW::LEFT, sl::MEM::CPU, mMatResolVideo);
             ts_rgb=mat_left.timestamp;
@@ -3595,10 +3594,7 @@ bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
             retrieved = sl::ERROR_CODE::SUCCESS == mZed.retrieveMeasure(mat_conf, sl::MEASURE::CONFIDENCE, sl::MEM::CPU, mMatResolDepth);
             grab_ts=mat_conf.timestamp;
         }
-        std::chrono::steady_clock::time_point e2_2 = std::chrono::steady_clock::now();
-        RCLCPP_INFO(get_logger(), "Image retrieving = %d [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(e2_2 - e2_1).count());
-    } else {
-        RCLCPP_INFO(get_logger(), "Lock timeout");
+        
     }
     // <---- Retrieve all required data
 
