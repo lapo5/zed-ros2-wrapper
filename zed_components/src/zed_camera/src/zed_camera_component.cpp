@@ -2688,9 +2688,9 @@ void ZedCamera::publishStaticImuFrameAndTopic() {
 
         mPubCamImuTransf->publish( *(mCameraImuTransfMgs.get()) );
 
-        RCLCPP_INFO_STREAM( get_logger(), "Advertised on topic: " << mPubCamImuTransf->get_topic_name() << " [LATCHED]");
-        RCLCPP_INFO( get_logger(), "Camera-IMU Translation: \n %g %g %g", sl_tr.x, sl_tr.y, sl_tr.z );
-        RCLCPP_INFO( get_logger(), "Camera-IMU Rotation: \n %s", sl_rot.getRotationMatrix().getInfos().c_str() );
+        // RCLCPP_INFO_STREAM( get_logger(), "Advertised on topic: " << mPubCamImuTransf->get_topic_name() << " [LATCHED]");
+        // RCLCPP_INFO( get_logger(), "Camera-IMU Translation: \n %g %g %g", sl_tr.x, sl_tr.y, sl_tr.z );
+        // RCLCPP_INFO( get_logger(), "Camera-IMU Rotation: \n %s", sl_rot.getRotationMatrix().getInfos().c_str() );
 
         mStaticImuTopicPublished=true;
     }
@@ -2707,7 +2707,7 @@ void ZedCamera::publishStaticImuFrameAndTopic() {
     // Publish transformation
     // mStaticTfBroadcaster->sendTransform(*(mCameraImuTransfMgs.get()));
 
-    RCLCPP_INFO_STREAM(get_logger(), "Published static TF: '" << mImuFrameId << "' -> '" << mLeftCamFrameId << "'" );
+    // RCLCPP_INFO_STREAM(get_logger(), "Published static TF: '" << mImuFrameId << "' -> '" << mLeftCamFrameId << "'" );
 
     mStaticImuFramePublished = true;
 }
@@ -3485,7 +3485,7 @@ void ZedCamera::callback_pubSensorsData() {
 
 bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    RCLCPP_INFO(get_logger(), "Time start = %d [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(begin.time_since_epoch()).count());
+    // RCLCPP_INFO(get_logger(), "Time start = %d [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(begin.time_since_epoch()).count());
 
     static sl::Timestamp lastZedTs = 0; // Used to calculate stable publish frequency
 
@@ -3534,9 +3534,9 @@ bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
 
     bool retrieved = false;
 
-    ts_rgb=0;       // used to check RGB/Depth sync
-    ts_depth=0;     // used to check RGB/Depth sync
-    grab_ts=0;
+    ts_rgb = 0;       // used to check RGB/Depth sync
+    ts_depth = 0;     // used to check RGB/Depth sync
+    grab_ts = 0;
 
     // ----> Retrieve all required data
     std::unique_lock<std::timed_mutex> lock(mCamDataMutex, std::defer_lock);
