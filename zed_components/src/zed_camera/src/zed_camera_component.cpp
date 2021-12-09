@@ -3726,7 +3726,7 @@ bool ZedCamera::publishVideoDepth( rclcpp::Time& out_pub_ts) {
     }
     // <---- Publish the disparity image if someone has subscribed to
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    RCLCPP_INFO(get_logger(), "Camera callback = %d [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
+    // RCLCPP_INFO(get_logger(), "Camera callback = %d [ms]", std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count());
     return true;
 }
 
